@@ -1,0 +1,237 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == "sanpuianup88@gmail.com" ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+      );
+    }
+
+    function isTeacher() {
+      return isAuthenticated() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "teacher"
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'name', 'class', 'school', 'phone']) &&
+             data.uid == request.auth.uid &&
+             data.name is string && data.name.size() >= 2 && data.name.size() < 100 &&
+             data.class is number &&
+             data.school is string && data.school.size() >= 3 && data.school.size() < 200 &&
+             data.phone is string && data.phone.matches('^[0-9]{10}$');
+    }
+
+    function isValidNote(data) {
+      return data.keys().hasAll(['title', 'subject', 'type', 'createdAt', 'authorId']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.subject is string &&
+             data.type in ['pdf', 'text', 'image', 'html', 'voice', 'video'] &&
+             data.createdAt is string &&
+             data.authorId == request.auth.uid &&
+             (!('pdfUrl' in data) || (data.pdfUrl is string && data.pdfUrl.size() < 1048576)) &&
+             (!('content' in data) || (data.content is string && data.content.size() < 1048576)) &&
+             (!('images' in data) || (data.images is list && data.images.size() <= 50)) &&
+             (!('htmlUrl' in data) || (data.htmlUrl is string && data.htmlUrl.size() < 1024)) &&
+             (!('htmlContent' in data) || (data.htmlContent is string && data.htmlContent.size() < 1048576)) &&
+             (!('voiceUrl' in data) || (data.voiceUrl is string && data.voiceUrl.size() < 1048576)) &&
+             (!('videoUrl' in data) || (data.videoUrl is string && data.videoUrl.size() < 1048576)) &&
+             (!('description' in data) || (data.description is string && data.description.size() < 1000));
+    }
+
+    function isValidNotice(data) {
+      return data.keys().hasAll(['subject', 'fromDate', 'toDate', 'type', 'createdAt']) &&
+             data.subject is string && data.subject.size() > 0 && data.subject.size() < 200 &&
+             data.fromDate is string &&
+             data.toDate is string &&
+             data.type in ['text', 'image', 'html'] &&
+             (!('content' in data) || (data.content is string && data.content.size() < 1048576)) &&
+             (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() < 1048576)) &&
+             (!('htmlUrl' in data) || (data.htmlUrl is string && data.htmlUrl.size() < 1024)) &&
+             (!('htmlContent' in data) || (data.htmlContent is string && data.htmlContent.size() < 1048576));
+    }
+
+    function isValidAppConfig(data) {
+      return data.keys().hasAll(['countdownMessage', 'countdownDate']) &&
+             data.countdownMessage is string && data.countdownMessage.size() < 1000 &&
+             data.countdownDate is string &&
+             (!('isNoteLocked' in data) || data.isNoteLocked is bool) &&
+             (!('noteAccessPassword' in data) || data.noteAccessPassword is string) &&
+             (!('crimeTapeText' in data) || data.crimeTapeText is string) &&
+             (!('quickByteVideoUrl' in data) || data.quickByteVideoUrl is string) &&
+             (!('hyperlinkText' in data) || data.hyperlinkText is string) &&
+             (!('hyperlinkUrl' in data) || data.hyperlinkUrl is string) &&
+             (!('hideClock' in data) || data.hideClock is bool) &&
+             (!('hideNotice' in data) || data.hideNotice is bool) &&
+             (!('hideCalendar' in data) || data.hideCalendar is bool) &&
+             (!('hideLofi' in data) || data.hideLofi is bool) &&
+             (!('hideChat' in data) || data.hideChat is bool);
+    }
+
+    function isValidQuiz(data) {
+      return data.keys().hasAll(['question', 'options', 'correctAnswer', 'subject']) &&
+             data.question is string && data.question.size() < 1000 &&
+             data.options is list && data.options.size() >= 2 && data.options.size() <= 10 &&
+             data.correctAnswer is int &&
+             data.subject is string;
+    }
+
+    function isValidMessage(data) {
+      return data.keys().hasAll(['senderId', 'receiverId', 'text', 'timestamp']) &&
+             data.senderId == request.auth.uid &&
+             data.receiverId is string &&
+             data.text is string && data.text.size() < 1000 &&
+             data.timestamp is string;
+    }
+
+    function isValidCalendarEvent(data) {
+      return data.keys().hasAll(['title', 'date', 'type', 'createdAt']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.date is string &&
+             data.type in ['exam', 'holiday', 'class', 'other'] &&
+             data.createdAt is string &&
+             (!('description' in data) || (data.description is string && data.description.size() < 1000));
+    }
+
+    function isValidQRScan(data) {
+      return data.keys().hasAll(['timestamp']) &&
+             data.timestamp is string &&
+             (!('userId' in data) || (data.userId is string && data.userId.size() < 128));
+    }
+
+    function isValidAdminRequest(data) {
+      return data.keys().hasAll(['userId', 'userName', 'userEmail', 'status', 'requestedAt']) &&
+             data.userId == request.auth.uid &&
+             data.userName is string && data.userName.size() < 150 &&
+             data.userEmail is string && data.userEmail.size() < 150 &&
+             data.status in ['pending', 'approved', 'rejected'] &&
+             data.requestedAt is string;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isAdmin() || (isOwner(userId) && 
+                      (!request.resource.data.keys().hasAll(['role']) || 
+                       request.resource.data.role != 'admin' || 
+                       request.auth.token.email == "sanpuianup88@gmail.com"));
+    }
+
+    match /leaderboard/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() || isOwner(userId);
+    }
+
+    match /notes/{noteId} {
+      allow read: if isAuthenticated();
+      allow create: if isAdmin() || isTeacher() || (isAuthenticated() && request.resource.data.isApproved == false && request.resource.data.authorId == request.auth.uid);
+      allow update: if isAdmin() || isTeacher() || (isAuthenticated() && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bookmarkCount']) || (resource.data.authorId == request.auth.uid && resource.data.isApproved == false)));
+      allow delete: if isAdmin() || isTeacher() || (isAuthenticated() && resource.data.authorId == request.auth.uid && resource.data.isApproved == false);
+    }
+
+    match /quizzes/{quizId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /readStatus/{statusId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    match /quizAttempts/{attemptId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && attemptId.split('_')[0] == request.auth.uid;
+    }
+
+    match /messages/{messageId} {
+      allow read, list: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidMessage(request.resource.data);
+    }
+
+    match /questions/{questionId} {
+      allow read, list: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin() || (isAuthenticated() && (resource.data.userId == request.auth.uid));
+    }
+
+    match /feedback/{feedbackId} {
+      allow read, list: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+    }
+
+    match /activities/{activityId} {
+      allow read, list: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    match /notices/{noticeId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /calendarEvents/{eventId} {
+      allow read, list: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /qrScans/{scanId} {
+      allow read, list: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidQRScan(request.resource.data);
+    }
+
+    match /snapsGallery/{snapId} {
+      allow read, list: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /lofiTracks/{trackId} {
+      allow read, list: if isAuthenticated();
+      allow write: if isAdmin();
+
+      match /chunks/{chunkId} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin();
+      }
+    }
+
+    match /adminRequests/{userId} {
+      allow read, list: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow create: if isAuthenticated() && isOwner(userId) && isValidAdminRequest(request.resource.data);
+      allow update: if isAdmin() || (isAuthenticated() && isOwner(userId) && request.resource.data.status == "pending" && isValidAdminRequest(request.resource.data));
+      allow delete: if isAdmin();
+    }
+
+    match /config/app {
+      allow read: if isAuthenticated();
+      allow write: if (isAdmin() || (isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "teacher")) && isValidAppConfig(request.resource.data);
+    }
+  }
+}

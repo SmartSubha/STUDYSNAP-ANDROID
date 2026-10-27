@@ -1,0 +1,249 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user details and progress",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string", "description": "Full name (min 2 words)" },
+        "class": { "type": "number", "description": "Numeric class" },
+        "school": { "type": "string", "description": "School name (min 3 words)" },
+        "phone": { "type": "string", "description": "10 digit phone number" },
+        "points": { "type": "number" },
+        "isVIP": { "type": "boolean" },
+        "role": { "type": "string", "enum": ["admin", "student"] },
+        "remoteCommand": { 
+          "type": "object",
+          "properties": {
+            "type": { "type": "string" },
+            "payload": { "type": "string" },
+            "timestamp": { "type": "string" }
+          }
+        },
+        "lockoutEnabled": { "type": "boolean" },
+        "lockoutPassword": { "type": "string" },
+        "lockoutAttemptsCount": { "type": "number" },
+        "lockoutPermanentSiren": { "type": "boolean" }
+      },
+      "required": ["uid", "name", "class", "school", "phone"]
+    },
+    "Note": {
+      "title": "Educational Note",
+      "description": "Notes added by admin",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "subject": { "type": "string" },
+        "pdfUrl": { "type": "string" },
+        "content": { "type": "string", "description": "Markdown content for text notes" },
+        "images": { "type": "array", "items": { "type": "string" }, "description": "List of image URLs" },
+        "htmlUrl": { "type": "string" },
+        "voiceUrl": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "description": { "type": "string" },
+        "type": { "type": "string", "enum": ["pdf", "text", "image", "html", "voice", "video"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "authorId": { "type": "string" }
+      },
+      "required": ["title", "subject", "type"]
+    },
+    "Notice": {
+      "title": "Official Notice",
+      "description": "Important updates for students",
+      "type": "object",
+      "properties": {
+        "subject": { "type": "string" },
+        "fromDate": { "type": "string", "format": "date" },
+        "toDate": { "type": "string", "format": "date" },
+        "type": { "type": "string", "enum": ["text", "image", "html"] },
+        "content": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "htmlUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["subject", "fromDate", "toDate", "type"]
+    },
+    "AppConfig": {
+      "title": "App Configuration",
+      "description": "Global app settings like countdown",
+      "type": "object",
+      "properties": {
+        "countdownMessage": { "type": "string" },
+        "countdownDate": { "type": "string", "format": "date-time" },
+        "crimeTapeText": { "type": "string" },
+        "quickByteVideoUrl": { "type": "string" },
+        "hyperlinkText": { "type": "string" },
+        "hyperlinkUrl": { "type": "string" }
+      },
+      "required": ["countdownMessage", "countdownDate"]
+    },
+    "SnapPhoto": {
+      "title": "Snap Gallery Photo",
+      "description": "Friends photography works posted by admin",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "photographer": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "photographer", "imageUrl"]
+    },
+    "LofiTrack": {
+      "title": "Lofi Relaxer Track",
+      "description": "Mellow tracks and soundscapes for stress relief and focus",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "artist": { "type": "string" },
+        "audioUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "artist", "audioUrl"]
+    },
+    "Quiz": {
+      "title": "Daily Quiz",
+      "description": "Daily quizzes for students",
+      "type": "object",
+      "properties": {
+        "question": { "type": "string" },
+        "options": { "type": "array", "items": { "type": "string" } },
+        "correctAnswer": { "type": "number" },
+        "subject": { "type": "string" },
+        "points": { "type": "number" },
+        "date": { "type": "string", "format": "date" }
+      },
+      "required": ["question", "options", "correctAnswer", "subject"]
+    },
+    "ReadStatus": {
+      "title": "Note Read Status",
+      "description": "Tracks if a user has read a note",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "noteId": { "type": "string" },
+        "isRead": { "type": "boolean" },
+        "readTime": { "type": "number" }
+      },
+      "required": ["userId", "noteId"]
+    },
+    "LeaderboardEntry": {
+      "title": "Leaderboard Entry",
+      "description": "Publicly visible points for leaderboard",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "points": { "type": "number" },
+        "isVIP": { "type": "boolean" }
+      },
+      "required": ["userId", "name", "points"]
+    },
+    "Message": {
+      "title": "Direct Message",
+      "description": "Messages between users",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "senderName": { "type": "string" }
+      },
+      "required": ["senderId", "receiverId", "text", "timestamp"]
+    },
+    "CalendarEvent": {
+      "title": "Calendar Event",
+      "description": "Events created by admin for the academic calendar",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "type": { "type": "string", "enum": ["exam", "holiday", "class", "other"] },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "date", "type"]
+    },
+    "QRScan": {
+      "title": "QR Code Scan Event",
+      "description": "Tracks a scan event from the QR code",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" }
+      },
+      "required": ["timestamp"]
+    },
+    "AdminRequest": {
+      "title": "Admin Permission Request",
+      "description": "A student's request to be promoted to administrator",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "requestedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "userName", "userEmail", "status", "requestedAt"]
+    }
+  },
+  "firestore": {
+    "/adminRequests/{userId}": {
+      "schema": "AdminRequest",
+      "description": "Administrative privilege requests from students"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/leaderboard/{userId}": {
+      "schema": "LeaderboardEntry",
+      "description": "Public leaderboard data"
+    },
+    "/notes/{noteId}": {
+      "schema": "Note",
+      "description": "Educational notes"
+    },
+    "/quizzes/{quizId}": {
+      "schema": "Quiz",
+      "description": "Daily quizzes"
+    },
+    "/readStatus/{statusId}": {
+      "schema": "ReadStatus",
+      "description": "User reading progress"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "User to user messages"
+    },
+    "/notices/{noticeId}": {
+      "schema": "Notice",
+      "description": "Official notices"
+    },
+    "/calendarEvents/{eventId}": {
+      "schema": "CalendarEvent",
+      "description": "Admin generated calendar events"
+    },
+    "/qrScans/{scanId}": {
+      "schema": "QRScan",
+      "description": "QR Code Scan Event tracking log"
+    },
+    "/snapsGallery/{snapId}": {
+      "schema": "SnapPhoto",
+      "description": "Snap gallery image entries uploaded by admin"
+    },
+    "/lofiTracks/{trackId}": {
+      "schema": "LofiTrack",
+      "description": "Mellow tracks and soundscapes uploaded by admin"
+    },
+    "/config/app": {
+      "schema": "AppConfig",
+      "description": "Global app configuration"
+    }
+  }
+}

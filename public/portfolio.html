@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART SUBHA | Cardiac Surgeon & Developer</title>
+    
+    <!-- External Resources -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <style>
+        :root {
+            --accent: #10b981; /* Premium Emerald/Neon Green */
+            --bg: #030a1e; /* Deep Royal Navy Blue */
+            --card: #0a1936; /* Navy Blue Card */
+            --text: #f8fafc; /* Slate 100 white */
+            --shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); transition: 0.4s; overflow-x: hidden; }
+
+        /* --- Widgets (Top Bar) --- */
+        .top-nav { position: fixed; top: 0; width: 100%; display: flex; justify-content: center; padding: 15px 25px; z-index: 1000; pointer-events: none; }
+        .widget-group { display: flex; gap: 10px; pointer-events: all; }
+        .widget { background: var(--card); padding: 8px 15px; border-radius: 12px; box-shadow: var(--shadow); font-family: 'Orbitron'; font-size: 0.75rem; color: var(--accent); border: 1px solid rgba(16, 185, 129, 0.15); display: flex; align-items: center; gap: 8px; }
+        
+        /* --- Hero Section --- */
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 20px 40px 20px; }
+        .brand-name { font-family: 'Orbitron'; font-size: clamp(2.5rem, 8vw, 4.5rem); letter-spacing: 5px; text-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+        .real-name { font-size: 1.2rem; color: #94a3b8; letter-spacing: 3px; margin-bottom: 20px; }
+        .typing-box { font-size: 1.5rem; color: var(--accent); font-weight: 600; min-height: 40px; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+
+        /* --- Profile Image Styling --- */
+        .profile-image-container { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .profile-glow-ring { 
+            position: relative; 
+            width: 190px; 
+            height: 190px; 
+            border-radius: 50%; 
+            padding: 5px; 
+            background: linear-gradient(135deg, var(--accent) 0%, #1e3a8a 100%); 
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.4); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .profile-glow-ring:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 0 50px rgba(16, 185, 129, 0.65);
+        }
+        .profile-avatar-fallback {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--card);
+            border: 4px solid var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .profile-avatar-fallback .initials {
+            font-family: 'Orbitron';
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+        }
+        .fallback-pulse-ring {
+            position: absolute;
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            opacity: 0.6;
+            animation: ring-pulse 2s infinite ease-out;
+        }
+        @keyframes ring-pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            100% { transform: scale(1.15); opacity: 0; }
+        }
+
+        /* --- Section Styling --- */
+        .container { max-width: 1000px; margin: auto; padding: 60px 20px; }
+        .section-title { font-size: 2rem; margin-bottom: 25px; border-bottom: 3px solid var(--accent); display: inline-block; padding-bottom: 5px; }
+
+        /* --- Timeline --- */
+        .timeline { border-left: 3px solid var(--accent); margin: 40px 0; padding-left: 30px; }
+        .t-item { margin-bottom: 50px; position: relative; }
+        .t-item::before { content: ""; width: 16px; height: 16px; background: var(--accent); border-radius: 50%; position: absolute; left: -41px; top: 5px; border: 3px solid var(--bg); }
+
+        /* --- Cards & Grid --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: var(--shadow); transition: 0.3s; border: 1px solid rgba(16, 185, 129, 0.05); }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.15); }
+
+        /* --- Live Heart Animation --- */
+        .heart-diagram { font-size: 8rem; color: #ef4444; text-align: center; margin: 50px 0; animation: live-pulse 0.8s infinite; filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.65)); }
+        @keyframes live-pulse { 0% { transform: scale(1); } 30% { transform: scale(1.2); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* --- Buttons --- */
+        .btn { background: var(--accent); color: #030a1e; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: 600; display: inline-block; border: none; cursor: pointer; transition: 0.3s; }
+        .btn:hover { box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4); transform: scale(1.05); }
+
+        footer { text-align: center; padding: 60px 20px; background: var(--card); border-top: 1px solid rgba(16, 185, 129, 0.1); margin-top: 80px; }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <!-- Top Navigation Widgets -->
+    <nav class="top-nav">
+        <div class="widget-group">
+            <div id="live-clock" class="widget"><i class="fas fa-clock"></i> 00:00:00</div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <h1 class="brand-name">SMART SUBHA</h1>
+        <p class="real-name">SUBHAJIT SANPUI</p>
+        <div class="typing-box" id="type-text"></div>
+        
+        <p style="margin-top: 30px; font-style: italic; max-width: 700px; padding: 0 20px; color: #94a3b8;">
+            "Quality is never an accident; it is always the result of high intention, sincere effort, intelligent direction and skillful execution."
+        </p>
+
+        <!-- Profile Image Frame with Dynamic Multiple URL / Fallback Loader -->
+        <div class="profile-image-container" data-aos="zoom-in" style="margin-top: 35px; margin-bottom: 10px;">
+            <div class="profile-glow-ring">
+                <div id="profile-fallback" class="profile-avatar-fallback" style="display: flex;">
+                    <span class="initials">SS</span>
+                    <div class="fallback-pulse-ring"></div>
+                </div>
+            </div>
+            <p style="font-size: 0.75rem; letter-spacing: 2px; color: var(--accent); margin-top: 15px; font-weight: 600; text-transform: uppercase;">ITZ SUBHA • ORGANISATION</p>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- My Components Section (Now on Top) -->
+        <section id="components" data-aos="fade-up">
+            <h2 class="section-title">MY COMPONENTS</h2>
+            <div class="grid">
+                <div class="card"><i class="fas fa-laptop"></i> <h3>Galaxy Book 4</h3></div>
+                <div class="card"><i class="fas fa-mobile-alt"></i> <h3>Redmi 9 Power</h3></div>
+                <div class="card"><i class="fas fa-headphones"></i> <h3>Triggr Ultrabuds N3</h3></div>
+            </div>
+        </section>
+
+        <!-- About Me -->
+        <section id="about" data-aos="fade-up" style="margin-top: 60px;">
+            <h2 class="section-title">ABOUT ME</h2>
+            <p style="font-size: 1.1rem; line-height: 1.8; opacity: 0.8; margin-bottom: 30px;">
+                I am a dedicated <b>Class 9 student</b> with a relentless drive for excellence. My life's mission is to become a world-class <b>Cardiac Surgeon</b>, healing hearts and saving lives. Beyond my medical goals, I am a passionate <b>Code Developer</b>, merging healthcare knowledge with AI-driven technology.
+            </p>
+            <div class="grid">
+                <div class="card" style="padding: 20px;">
+                    <h4 style="color: var(--accent); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;"><i class="fas fa-video" style="margin-right: 5px;"></i> Favorite Movie</h4>
+                    <p style="font-weight: bold;">Chhichhore</p>
+                </div>
+                <div class="card" style="padding: 20px;">
+                    <h4 style="color: var(--accent); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;"><i class="fas fa-star" style="margin-right: 5px;"></i> Favorite Actor</h4>
+                    <p style="font-weight: bold;">Sushant Singh Rajput</p>
+                </div>
+                <div class="card" style="padding: 20px;">
+                    <h4 style="color: var(--accent); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;"><i class="fas fa-music" style="margin-right: 5px;"></i> Favorite Song</h4>
+                    <p style="font-weight: bold;">Ik Vaari Aa</p>
+                </div>
+                <div class="card" style="padding: 20px;">
+                    <h4 style="color: var(--accent); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;"><i class="fas fa-calendar-day" style="margin-right: 5px;"></i> Special Date</h4>
+                    <p style="font-weight: bold;">25th January</p>
+                </div>
+
+                <div class="card" style="padding: 20px;">
+                    <h4 style="color: var(--accent); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;"><i class="fas fa-palette" style="margin-right: 5px;"></i> Favourite Colour</h4>
+                    <p style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                        Navy Blue + Green Vibe
+                        <i class="fas fa-heart" style="background: linear-gradient(135deg, #1e40af 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.7)); font-size: 1.15rem; display: inline-block;"></i>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Current Focus -->
+        <section id="focus" data-aos="fade-right">
+            <h2 class="section-title">CURRENT FOCUS</h2>
+            <div class="card" style="border-left: 5px solid var(--accent);">
+                <h3>Academic & Innovation</h3>
+                <p>Class 9 WBBSE Academic Topper Syllabus</p>
+                <p>& Prototyping Healthcare AI Modules for Cardiac Research.</p>
+            </div>
+        </section>
+
+        <!-- Journey Timeline -->
+        <section id="journey">
+            <h2 class="section-title">MY JOURNEY</h2>
+            <div class="timeline">
+                <div class="t-item" data-aos="fade-left">
+                    <h3>2022</h3>
+                    <p>Started academic journey at <b>Krishnachandrapur High School</b> (Class 5).</p>
+                </div>
+                <div class="t-item" data-aos="fade-left" data-aos-delay="100">
+                    <h3>2024</h3>
+                    <p>Began developing <b>Apps</b> and <b>Full-stack Code</b>.</p>
+                </div>
+                <div class="t-item" data-aos="fade-left" data-aos-delay="200">
+                    <h3>2026</h3>
+                    <p>Launched <b>StudySnap</b> project and personal digital organisation.</p>
+                </div>
+                <div class="t-item" data-aos="fade-left" data-aos-delay="300">
+                    <h3>Future Goal</h3>
+                    <p>Becoming a specialized <b>Cardiac Surgeon</b>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Heart Diagram -->
+        <div class="heart-diagram" data-aos="zoom-in">
+            <i class="fas fa-heart"></i>
+            <p style="font-size: 1rem; font-family: 'Orbitron'; font-weight: normal; margin-top: -10px;">Heartbeat Sync Active</p>
+        </div>
+
+        <!-- Links & Contact -->
+        <section id="contacts">
+            <h2 class="section-title">QUICK CONTACTS</h2>
+            <div class="grid">
+                <!-- Social Links -->
+                <div class="card" data-aos="flip-up">
+                    <div style="margin-bottom: 20px;">
+                        <a href="https://www.facebook.com/crazyxsubha" target="_blank" style="color: #1877F2; font-size: 1.8rem; margin-right: 20px;"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/crazyxsubha/?utm_source=qr&r=nametag" target="_blank" style="color: #E4405F; font-size: 1.8rem; margin-right: 20px;"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/8670225411" target="_blank" style="color: #25D366; font-size: 1.8rem;"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                    <a href="/" class="btn">StudySnap Portal</a>
+                </div>
+                <!-- Address -->
+                <div class="card" data-aos="flip-up" data-aos-delay="100">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>Kamarpota, Nalua, Mathurapur-I, South 24 PGS - 743354, WB</p>
+                    <a href="https://www.google.com/maps/search/HOME+OF+ANUP+KUMAR+SANPUI" target="_blank" class="btn">Smart Subha Organisation</a>
+                </div>
+                <!-- Phone & Email -->
+                <div class="card" data-aos="flip-up" data-aos-delay="200">
+                    <i class="fas fa-phone-alt"></i>
+                    <p style="font-weight: bold; margin-bottom: 10px;">+91 8670225411</p>
+                    <hr style="opacity: 0.1; margin-bottom: 10px;">
+                    <i class="fas fa-envelope"></i>
+                    <p>iamsubha4200@gmail.com</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 SMART SUBHA | Future Cardiac Surgeon | Developed on Galaxy Book 4</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        // --- Widgets Logic ---
+        setInterval(() => {
+            const now = new Date();
+            // Prefix to match premium widget look
+            document.getElementById('live-clock').innerHTML = '<i class="fas fa-clock"></i> ' + now.toLocaleTimeString();
+        }, 1000);
+
+        // --- Image Fallback Logic ---
+        const alternativeImages = [
+            '/subha.jpg',
+            '/subha.png',
+            '/subha.jpeg',
+            './subha.jpg',
+            './subha.png',
+            './public/subha.jpg',
+            '/itz_subha.png',
+            '/itz_subha.jpeg',
+            'itz_subha.jpg',
+            'itz_subha.png',
+            'subha_profile.png',
+            'subha_profile.jpg',
+            '/image.png',
+            '/image.jpg',
+            '/image.jpeg',
+            'image.png',
+            'image.jpg',
+            'attachment.jpg',
+            'attachment.png'
+        ];
+        let currentAltIdx = 0;
+        function tryAlternativeImages(imgEl) {
+            console.log('Main image failed to load, trying fallback path ' + (currentAltIdx + 1));
+            if (currentAltIdx < alternativeImages.length) {
+                imgEl.src = alternativeImages[currentAltIdx++];
+            } else {
+                imgEl.style.display = 'none';
+                document.getElementById('profile-fallback').style.display = 'flex';
+            }
+        }
+
+        // --- Typing Animation ---
+        const typeBox = document.getElementById("type-text");
+        const phrases = ["Future Cardiac Surgeon", "Full-Stack Developer", "Founder of StudySnap"];
+        let pIdx = 0, cIdx = 0, isDeleting = false;
+
+        function type() {
+            let current = phrases[pIdx];
+            if (isDeleting) {
+                typeBox.textContent = current.substring(0, cIdx - 1);
+                cIdx--;
+            } else {
+                typeBox.textContent = current.substring(0, cIdx + 1);
+                cIdx++;
+            }
+            let speed = isDeleting ? 50 : 120;
+            if (!isDeleting && cIdx === current.length) { speed = 2000; isDeleting = true; }
+            else if (isDeleting && cIdx === 0) { isDeleting = false; pIdx = (pIdx + 1) % phrases.length; speed = 500; }
+            setTimeout(type, speed);
+        }
+        window.onload = type;
+
+        // --- Theme Switcher ---
+        function toggleTheme() {
+            const body = document.body;
+            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+    </script>
+</body>
+</html>

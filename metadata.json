@@ -1,0 +1,6 @@
+{
+  "name": "StudySnap",
+  "description": "A comprehensive educational app with subject-wise notes, AI doubt solver, quizzes, and a student leaderboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
